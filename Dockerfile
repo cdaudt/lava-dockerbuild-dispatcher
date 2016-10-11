@@ -10,11 +10,10 @@ RUN \
  cd /root && \
  git clone https://git.linaro.org/lava/lava-dispatcher.git && \
  cd lava-dispatcher && \
- git fetch https://review.linaro.org/lava/lava-dispatcher refs/changes/08/14408/14 && git cherry-pick FETCH_HEAD && \
  echo "cd \${DIR} && dpkg -i *.deb" >> /usr/share/lava-server/debian-dev-build.sh && \
  /usr/share/lava-server/debian-dev-build.sh -p lava-dispatcher && \
  rm -rf /var/lib/apt/lists/*
 
 COPY lava-slave /etc/lava-dispatcher/lava-slave
-
+COPY cyp_ocd /opt/cyp_ocd
 CMD sed -i -e "s/{LAVA_MASTER}/$LAVA_MASTER/g" /etc/lava-dispatcher/lava-slave && service lava-slave restart && bash
