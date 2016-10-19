@@ -16,4 +16,4 @@ RUN \
 
 COPY lava-slave /etc/lava-dispatcher/lava-slave
 COPY cyp_ocd /opt/cyp_ocd
-CMD sed -i -e "s/{LAVA_MASTER}/$LAVA_MASTER/g" /etc/lava-dispatcher/lava-slave && service lava-slave restart && tail -F /var/log/lava-dispatcher/*log
+CMD sed -i -e "s/{LAVA_MASTER}/$LAVA_MASTER/g" /etc/lava-dispatcher/lava-slave && service lava-slave restart && bash
