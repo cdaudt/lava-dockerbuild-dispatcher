@@ -10,6 +10,7 @@ RUN \
  cd /root && \
  git clone -b proj/add_wiced git://10.136.64.138/git/lava-dispatcher && \
  cd lava-dispatcher && \
+ git checkout -b wip 250e29bdef3ae30954f57f852d251fe776d6b180 && \
  echo "cd \${DIR} && dpkg -i *.deb" >> /usr/share/lava-server/debian-dev-build.sh && \
  /usr/share/lava-server/debian-dev-build.sh -p lava-dispatcher && \
  rm -rf /var/lib/apt/lists/*
