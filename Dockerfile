@@ -24,5 +24,5 @@ RUN \
 RUN pip install --pre -U pyocd
 
 COPY lava-slave /etc/lava-dispatcher/lava-slave
-COPY cyp_ocd /opt/cyp_ocd
+COPY wiced_ocd /opt/cyp_ocd
 CMD sed -i -e "s/{LAVA_MASTER}/$LAVA_MASTER/g" /etc/lava-dispatcher/lava-slave && service lava-slave restart && bash
