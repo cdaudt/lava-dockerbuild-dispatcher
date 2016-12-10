@@ -1,7 +1,8 @@
+VER="cypress-0"
 ATTEMPT=0
 while :
 do
-	docker build -t lava/dispatcher:2016-11.1 .
+	docker build $* -t lava/dispatcher:${VER} .
 	if [ $? -eq 0 ]
 	then 
 		break
@@ -13,5 +14,5 @@ do
 	sleep 10m
 done
 
-docker tag lava/dispatcher:2016-11.1 rodan.ric.broadcom.com:5000/lava/dispatcher:2016-11.1
-docker push  rodan.ric.broadcom.com:5000/lava/dispatcher:2016-11.1
+docker tag lava/dispatcher:${VER} rodan.ric.broadcom.com:5000/lava/dispatcher:${VER}
+docker push rodan.ric.broadcom.com:5000/lava/dispatcher:${VER}
