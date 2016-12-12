@@ -27,4 +27,8 @@ RUN apt install -y lavapdu-client
 
 COPY lava-slave /etc/lava-dispatcher/lava-slave
 COPY wiced_ocd /opt/cyp_ocd
-CMD sed -i -e "s/{LAVA_MASTER}/$LAVA_MASTER/g" /etc/lava-dispatcher/lava-slave && service lava-slave restart && bash
+CMD \
+  sed -i -e "s/{LAVA_MASTER}/$LAVA_MASTER/g" /etc/lava-dispatcher/lava-slave && \
+  service lava-slave restart &&  \
+  sleep 5 && \
+  tail -F /var/log/lava*/lava*log
