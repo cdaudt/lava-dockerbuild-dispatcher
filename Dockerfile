@@ -24,11 +24,13 @@ RUN \
 RUN pip install --pre -U pyocd
 
 RUN apt install -y lavapdu-client
+RUN sed -i -e 's/^TFTP_DIRECTORY=.*$/TFTP_DIRECTORY="\/var\/lib\/lava\/dispatcher\/tmp"/' /etc/default/tftpd-hpa
 
 COPY lava-slave /etc/lava-dispatcher/lava-slave
 COPY wiced_ocd /opt/cyp_ocd
 CMD \
   sed -i -e "s/{LAVA_MASTER}/$LAVA_MASTER/g" /etc/lava-dispatcher/lava-slave && \
   service lava-slave restart &&  \
+  service tftpd-hpa restart && \
   sleep 5 && \
   tail -F /var/log/lava*/lava*log
