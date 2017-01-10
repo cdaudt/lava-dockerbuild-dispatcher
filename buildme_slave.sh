@@ -1,8 +1,12 @@
+TAGNAME="lava/dispatcher"
 VER="cypress-0"
 ATTEMPT=0
+NOCACHE=${1:-false}
+COPYTO=${2:-}
+echo "NOCACHE:${NOCACHE} COPYTO:${COPYTO}"
 while :
 do
-	docker build $* -t lava/dispatcher:${VER} .
+	docker build --no-cache=${NOCACHE} -t ${TAGNAME}:${VER} .
 	if [ $? -eq 0 ]
 	then 
 		break
@@ -14,5 +18,8 @@ do
 	sleep 10m
 done
 
-docker tag lava/dispatcher:${VER} rodan.ric.broadcom.com:5000/lava/dispatcher:${VER}
-docker push rodan.ric.broadcom.com:5000/lava/dispatcher:${VER}
+if [ "${COPYTO}A" != "A" ]
+then
+	docker tag ${TAGNAME}:${VER} ${COPYTO}/${TAGNAME}:${VER}
+	docker push ${COPYTO}/${TAGNAME}:${VER}
+fi
