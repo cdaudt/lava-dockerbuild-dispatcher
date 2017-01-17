@@ -19,6 +19,10 @@ RUN echo 'lava-server   lava-server/instance-name string lava-dispatch-3' | debc
  && apt-get update
 
 RUN \
+ DEBIAN_FRONTEND=noninteractive apt-get -t jessie-backports install -y \
+ python-pyudev ntp kpartx openbsd-inetd
+
+RUN \
  DEBIAN_FRONTEND=noninteractive apt-get install -y \
  lava-dispatcher lava-dev git python-pip
 RUN pip install --pre -U pyocd
