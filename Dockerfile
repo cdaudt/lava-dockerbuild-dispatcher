@@ -24,8 +24,26 @@ RUN \
 
 RUN \
  DEBIAN_FRONTEND=noninteractive apt-get install -y \
- lava-dispatcher lava-dev git python-pip
+ lava-dev git python-pip
+
 RUN pip install --pre -U pyocd
+
+RUN \
+ DEBIAN_FRONTEND=noninteractive apt-get install -y \
+ gdebi
+
+RUN \
+ DEBIAN_FRONTEND=noninteractive apt-get install -y \
+ tftpd-hpa
+
+COPY lava-dispatcher_*deb /root
+
+
+RUN \
+ cd /root && \
+ export DEBFILE=lava-dispatcher_*deb && \
+ echo 'y'|DEBIAN_FRONTEND=noninteractive gdebi --option=APT::Get::force-yes=1,APT::Get::Assume-Yes=1 $DEBFILE && \
+ rm ${DEBFILE}
 
 RUN apt install -y lavapdu-client
 RUN sed -i -e 's/^TFTP_DIRECTORY=.*$/TFTP_DIRECTORY="\/var\/lib\/lava\/dispatcher\/tmp"/' /etc/default/tftpd-hpa
