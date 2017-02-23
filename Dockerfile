@@ -32,6 +32,10 @@ RUN \
 
 RUN \
  DEBIAN_FRONTEND=noninteractive apt-get install -y \
+ python-setproctitle
+
+RUN \
+ DEBIAN_FRONTEND=noninteractive apt-get install -y \
  lava-dev git
 
 RUN pip install --pre -U pyocd
