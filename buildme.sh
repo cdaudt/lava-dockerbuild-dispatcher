@@ -4,6 +4,11 @@ ATTEMPT=0
 NOCACHE=${1:-true}
 COPYTO=${2:-}
 echo "NOCACHE:${NOCACHE} COPYTO:${COPYTO}"
+if [ ! -d wiced-ocd ]
+then
+  echo "Missing wiced-ocd subdir. Checking it out"
+  git clone git://git-iot.aus.cypress.com/lava/tools/wiced-ocd
+fi
 docker build \
   --label "build.source=`git log --oneline -1`" \
   --label "build.status=`git status --short`" \
