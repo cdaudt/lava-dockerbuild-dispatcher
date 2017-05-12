@@ -8,9 +8,9 @@ PASSWORD=`cat /home/${ADMINUSER}/.pushpw`
 
 function dockerpush()
 {
-  docker login -u ${ADMINUSER} -p ${PASSWORD}
+  docker login -u ${ADMINUSER} -p ${PASSWORD} ${COPYTO}
   docker push $1
-  docker logout
+  docker logout ${COPYTO}
 }
 
 echo "NOCACHE:${NOCACHE} COPYTO:${COPYTO}"
