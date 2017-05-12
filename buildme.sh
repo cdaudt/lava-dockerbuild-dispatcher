@@ -3,6 +3,16 @@ VER="latest"
 ATTEMPT=0
 NOCACHE=${1:-true}
 COPYTO=${2:-}
+ADMINUSER=lava-admin
+PASSWORD=`cat /home/${ADMINUSER}/.pushpw`
+
+function dockerpush()
+{
+  docker login -u ${ADMINUSER} -p ${PASSWORD}
+  docker push $1
+  docker logout
+}
+
 echo "NOCACHE:${NOCACHE} COPYTO:${COPYTO}"
 if [ ! -d wiced-ocd ]
 then
@@ -16,12 +26,12 @@ docker build \
   -t ${TAGNAME}:${VER} \
   .
 if [ $? -ne 0 ]
-then 
+then
   exit 1
 fi
 
 if [ "${COPYTO}A" != "A" ]
 then
   docker tag ${TAGNAME}:${VER} ${COPYTO}/${TAGNAME}:${VER}
-  docker push ${COPYTO}/${TAGNAME}:${VER}
+  dockerpush ${COPYTO}/${TAGNAME}:${VER}
 fi
