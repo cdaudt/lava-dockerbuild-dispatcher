@@ -28,6 +28,7 @@ RUN \
  python3-sphinx \
  pep8 \
  python-setuptools \
+ python-voluptuous \
  python-pip
 
 RUN \
