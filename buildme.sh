@@ -27,11 +27,14 @@ docker build \
   --no-cache=${NOCACHE} \
   -t ${TAGNAME}:${VER} \
   . \
-  | tee  ${LOGS}
+  >  ${LOGS} 2>&1
 if [ $? -ne 0 ]
 then
+  cat ${LOGS}
   exit 1
 fi
+set -e
+cat ${LOGS}
 HASH=`grep "Successfully built " ${LOGS}|awk '{print $3}'`
 echo "IMAGE_BUILD:TAGNAME=${TAGNAME}:HASH=${HASH}"
 
