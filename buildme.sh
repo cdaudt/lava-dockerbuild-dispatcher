@@ -15,7 +15,7 @@ function dockerpush()
   docker logout ${COPYTO}
 }
 
-echo "NOCACHE:${NOCACHE} COPYTO:${COPYTO} VER=${VER}"
+echo "NOCACHE:${NOCACHE} COPYTO:${COPYTO} VER=${VER} LOGS=${LOGS}"
 if [ ! -d wiced-ocd ]
 then
   echo "Missing wiced-ocd subdir. Checking it out"
@@ -25,7 +25,7 @@ docker build \
   --label "build.source=`git log --oneline -1`" \
   --label "build.status=`git status --short`" \
   --no-cache=${NOCACHE} \
-  -t ${TAGNAME}:${VER} \
+  -t lava/dispatcher:__stage0__ \
   . \
   >  ${LOGS} 2>&1
 if [ $? -ne 0 ]
@@ -33,9 +33,43 @@ then
   cat ${LOGS}
   exit 1
 fi
-set -e
+
+# Creation of LXC containers require --priviledged argument, which is only
+# available to the docker run command (for now)
+CIDFILE="cid.$RANDOM"
+docker run -t --cidfile ${CIDFILE} --privileged lava/dispatcher:__stage0__ bin/bash -c "lxc-create -n cache-builder -t debian -- --release stretch --arch amd64 && lxc-destroy -n cache-builder -f" >> ${LOGS} 2>&1
+RC=$?
+read CID < ${CIDFILE}
+rm ${CIDFILE}
+if [ ${RC} -eq 0 ]
+then
+    docker commit ${CID} lava/dispatcher:__stage1__
+fi
+docker rm ${CID}
+docker rmi lava/dispatcher:__stage0__
+if [ ${RC} -ne 0 ]
+then
+  cat ${LOGS}
+  exit 1
+fi
+
+docker build \
+  --label "build.source=`git log --oneline -1`" \
+  --label "build.status=`git status --short`" \
+  --no-cache=${NOCACHE} \
+  -t ${TAGNAME}:${VER} \
+  -f Dockerfile-final \
+  . \
+  >>  ${LOGS} 2>&1
+RC=$?
+docker rmi lava/dispatcher:__stage1__
 cat ${LOGS}
-HASH=`grep "Successfully built " ${LOGS}|awk '{print $3}'`
+if [ ${RC} -ne 0 ]
+then
+  exit 1
+fi
+set -e
+HASH=`tail ${LOGS}|grep "Successfully built "|awk '{print $3}'`
 echo "IMAGE_BUILD:TAGNAME=${TAGNAME}:HASH=${HASH}"
 
 if [ "${COPYTO}A" != "A" ]

@@ -1,0 +1,24 @@
+FROM lava/dispatcher:__stage1__
+
+# Populate the LXC cache with some packages
+RUN \
+ chroot /var/cache/lxc/debian/rootfs-stretch-amd64/ \
+ /bin/bash -c "DEBIAN_FRONTEND=noninteractive apt-get install -y python libusb-0.1 libusb-1.0 udev expect && exit"
+
+RUN \
+ mkdir -p /var/cache/lxc/debian/rootfs-stretch-amd64/opt && \
+ cp -a /opt/cyp_ocd /var/cache/lxc/debian/rootfs-stretch-amd64/opt
+
+# Configure LXC defaults to use bridge network, and to mount /run/udev so
+# udevadm can run inside the container
+RUN \
+ echo 'USE_LXC_BRIDGE="true"' > /etc/default/lxc-net && \
+ echo 'lxc.network.type = veth\nlxc.network.link = lxcbr0\nlxc.network.flags = up\nlxc.network.hwaddr = 00:16:3e:xx:xx:xx\nlxc.mount.entry = tmpfs run tmpfs rw,nosuid,nodev,mode=755\nlxc.mount.entry = /run/udev run/udev none ro,bind,create=dir' > /etc/lxc/default.conf
+
+CMD \
+  sed -i -e "s/{LAVA_MASTER}/$LAVA_MASTER/g" /etc/lava-dispatcher/lava-slave && \
+  service lava-slave restart &&  \
+  service tftpd-hpa restart && \
+  /usr/lib/x86_64-linux-gnu/lxc/lxc-net start && \
+  sleep 5 && \
+  tail -F /var/log/lava*/lava*log
