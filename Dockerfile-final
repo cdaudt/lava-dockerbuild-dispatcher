@@ -13,7 +13,7 @@ RUN \
 # udevadm can run inside the container
 RUN \
  echo 'USE_LXC_BRIDGE="true"' > /etc/default/lxc-net && \
- echo 'lxc.network.type = veth\nlxc.network.link = lxcbr0\nlxc.network.flags = up\nlxc.network.hwaddr = 00:16:3e:xx:xx:xx\nlxc.mount.entry = tmpfs run tmpfs rw,nosuid,nodev,mode=755\nlxc.mount.entry = /run/udev run/udev none ro,bind,create=dir' > /etc/lxc/default.conf
+ echo 'lxc.network.type = veth\nlxc.network.link = lxcbr0\nlxc.network.flags = up\nlxc.network.hwaddr = 00:16:3e:xx:xx:xx\nlxc.mount.entry = tmpfs run tmpfs rw,nosuid,nodev,mode=755\nlxc.mount.entry = /run/udev run/udev none ro,bind,create=dir\nlxc.aa_allow_incomplete = 1' > /etc/lxc/default.conf
 
 CMD \
   sed -i -e "s/{LAVA_MASTER}/$LAVA_MASTER/g" /etc/lava-dispatcher/lava-slave && \
