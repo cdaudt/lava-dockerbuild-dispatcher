@@ -2,7 +2,8 @@ FROM lava/baseline
 
 RUN \
  DEBIAN_FRONTEND=noninteractive apt-get install -y \
- lava-dev
+ lava-dev \
+ lava-coordinator
 
 RUN pip install --pre -U pyocd
 

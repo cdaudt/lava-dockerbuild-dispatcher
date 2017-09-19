@@ -17,6 +17,7 @@ RUN \
 
 CMD \
   sed -i -e "s/{LAVA_MASTER}/$LAVA_MASTER/g" /etc/lava-dispatcher/lava-slave && \
+  sed -i -e "s/localhost/$LAVA_MASTER/g" /etc/lava-coordinator/lava-coordinator.conf && \
   service lava-slave restart &&  \
   service tftpd-hpa restart && \
   /usr/lib/x86_64-linux-gnu/lxc/lxc-net start && \
